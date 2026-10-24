@@ -1,5 +1,6 @@
 import { ArrowUpRight, LogOut, Menu } from "lucide-react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 import { APP_ROUTES, ROUTE_GROUPS } from "../../utils/appRoutes.js";
 import { useAuth } from "../../features/auth/useAuth.js";
 
@@ -24,7 +25,7 @@ export default function AppLayout() {
           to="/dashboard"
           aria-label="ALABATT Hub home"
         >
-          <span className="brand-mark">A</span>
+          <img className="brand-logo" src={logo} alt="" />
           <span className="brand-name">
             ALABATT<span>HUB</span>
           </span>

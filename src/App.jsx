@@ -7,6 +7,10 @@ import { AuthProvider } from "./features/auth/AuthContext.jsx";
 import LoginPage from "./features/auth/LoginPage.jsx";
 import ProtectedRoute from "./features/auth/ProtectedRoute.jsx";
 import RegisterPage from "./features/auth/RegisterPage.jsx";
+import MembershipsPage from "./features/memberships/MembershipsPage.jsx";
+import ReportsPage from "./features/reports/ReportsPage.jsx";
+import AuditLogsPage from "./features/auditLogs/AuditLogsPage.jsx";
+import RefundsPage from "./features/refunds/RefundsPage.jsx";
 import { APP_ROUTES, PUBLIC_ROUTES } from "./utils/appRoutes.js";
 
 function App() {
@@ -36,7 +40,17 @@ function App() {
                 >
                   <Route
                     element={
-                      <RoutePlaceholder title={route.label} path={route.path} />
+                      route.path === "/memberships" ? (
+                        <MembershipsPage />
+                      ) : route.path === "/reports" ? (
+                        <ReportsPage />
+                      ) : route.path === "/audit-logs" ? (
+                        <AuditLogsPage />
+                      ) : route.path === "/refunds" ? (
+                        <RefundsPage />
+                      ) : (
+                        <RoutePlaceholder title={route.label} path={route.path} />
+                      )
                     }
                     index
                   />
