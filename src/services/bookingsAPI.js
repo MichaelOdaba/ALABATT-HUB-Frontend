@@ -68,3 +68,7 @@ export function createEquipmentLoan(data) {
 export function processEquipmentReturn(id, data) {
   return apiRequest(`/api/equipment-loans/${id}/return/`, { method: "POST", body: data });
 }
+
+export function updateEquipmentLoan(id, data) {
+  return apiRequest(`/api/equipment-loans/${id}/`, { method: "PUT", body: data });
+}

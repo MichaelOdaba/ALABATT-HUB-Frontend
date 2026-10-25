@@ -17,6 +17,7 @@ import EquipmentLoansPage from "./features/equipmentLoans/EquipmentLoansPage.jsx
 import ReportsPage from "./features/reports/ReportsPage.jsx";
 import AuditLogsPage from "./features/auditLogs/AuditLogsPage.jsx";
 import RefundsPage from "./features/refunds/RefundsPage.jsx";
+import NotificationsPage from "./features/notifications/NotificationsPage.jsx";
 import { APP_ROUTES, PUBLIC_ROUTES } from "./utils/appRoutes.js";
 
 function resolvePageComponent(path) {
@@ -31,6 +32,7 @@ function resolvePageComponent(path) {
     case "/reports": return <ReportsPage />;
     case "/audit-logs": return <AuditLogsPage />;
     case "/refunds": return <RefundsPage />;
+    case "/notifications": return <NotificationsPage />;
     default: return null;
   }
 }

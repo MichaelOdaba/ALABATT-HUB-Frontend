@@ -12,6 +12,7 @@ import { useAuth } from "../auth/useAuth.js";
 import {
   getEquipmentLoans,
   processEquipmentReturn,
+  updateEquipmentLoan,
 } from "../../services/bookingsAPI.js";
 import { formatNaira, formatReportDate } from "../reports/reportsUtils.js";
 
@@ -157,6 +158,31 @@ function ReturnDialog({ open, loan, onClose, onSubmit, busy }) {
   );
 }
 
+function StatusDialog({ target, onClose, onConfirm, busy }) {
+  if (!target) return null;
+  const approving = target.status === "active";
+  return (
+    <div className="mp-overlay" role="dialog" aria-modal="true" aria-labelledby="loan-status-title">
+      <div className="mp-modal mp-modal--sm">
+        <div className="mp-modal-header">
+          <h2 className="mp-modal-title" id="loan-status-title">{approving ? "Approve loan" : "Cancel loan"}</h2>
+          <button className="mp-modal-close" onClick={onClose} type="button" aria-label="Close" disabled={busy}><X size={18} /></button>
+        </div>
+        <p className="mp-modal-body">
+          {approving ? "Approve" : "Cancel"} the equipment loan for <strong>{getUserDisplay(target.loan)}</strong>?
+        </p>
+        <div className="mp-modal-actions">
+          <button className="mp-btn mp-btn--ghost" onClick={onClose} disabled={busy} type="button">Keep</button>
+          <button className={`mp-btn mp-btn--${approving ? "primary" : "danger"}`} onClick={onConfirm} disabled={busy} type="button">
+            {busy && <Loader2 size={14} className="mp-spin" aria-hidden="true" />}
+            {approving ? "Approve loan" : "Cancel loan"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────
 export default function EquipmentLoansPage() {
   const { user } = useAuth();
@@ -168,6 +194,8 @@ export default function EquipmentLoansPage() {
   const [toast, setToast] = useState(null);
   const [returnTarget, setReturnTarget] = useState(null);
   const [returning, setReturning] = useState(false);
+  const [statusTarget, setStatusTarget] = useState(null);
+  const [statusUpdating, setStatusUpdating] = useState(false);
 
   const fetchRef = useRef(false);
 
@@ -202,6 +230,21 @@ export default function EquipmentLoansPage() {
       setServerError(err.message || "Failed to process return.");
     } finally {
       setReturning(false);
+    }
+  }
+
+  async function handleStatusUpdate() {
+    if (!statusTarget) return;
+    setStatusUpdating(true);
+    try {
+      await updateEquipmentLoan(statusTarget.loan.id, { status: statusTarget.status });
+      setStatusTarget(null);
+      showToast("success", `Loan ${statusTarget.status === "active" ? "approved" : "cancelled"}.`);
+      await loadData();
+    } catch (err) {
+      showToast("error", err.message || "Failed to update loan status.");
+    } finally {
+      setStatusUpdating(false);
     }
   }
 
@@ -295,6 +338,24 @@ export default function EquipmentLoansPage() {
                   </td>
                   {isManager && (
                     <td>
+                      {loan.status?.toLowerCase() === "pending" && (
+                        <>
+                          <button
+                            className="secondary-button refund-action"
+                            type="button"
+                            onClick={() => setStatusTarget({ loan, status: "active" })}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="secondary-button refund-action refund-action-danger"
+                            type="button"
+                            onClick={() => setStatusTarget({ loan, status: "cancelled" })}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
                       {canReturn(loan) && (
                         <button
                           className="secondary-button refund-action"
@@ -320,6 +381,12 @@ export default function EquipmentLoansPage() {
         busy={returning}
         onClose={() => setReturnTarget(null)}
         onSubmit={handleReturn}
+      />
+      <StatusDialog
+        target={statusTarget}
+        busy={statusUpdating}
+        onConfirm={handleStatusUpdate}
+        onClose={() => setStatusTarget(null)}
       />
     </section>
   );
