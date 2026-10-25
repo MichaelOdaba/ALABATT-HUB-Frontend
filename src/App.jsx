@@ -7,11 +7,33 @@ import { AuthProvider } from "./features/auth/AuthContext.jsx";
 import LoginPage from "./features/auth/LoginPage.jsx";
 import ProtectedRoute from "./features/auth/ProtectedRoute.jsx";
 import RegisterPage from "./features/auth/RegisterPage.jsx";
+import DashboardPage from "./features/dashboard/DashboardPage.jsx";
 import MembershipsPage from "./features/memberships/MembershipsPage.jsx";
+import MembershipPlansPage from "./features/memberships/membershipPlansPage.jsx";
+import BookingsPage from "./features/bookings/BookingsPage.jsx";
+import FacilitiesPage from "./features/facilities/FacilitiesPage.jsx";
+import EquipmentPage from "./features/equipment/EquipmentPage.jsx";
+import EquipmentLoansPage from "./features/equipmentLoans/EquipmentLoansPage.jsx";
 import ReportsPage from "./features/reports/ReportsPage.jsx";
 import AuditLogsPage from "./features/auditLogs/AuditLogsPage.jsx";
 import RefundsPage from "./features/refunds/RefundsPage.jsx";
 import { APP_ROUTES, PUBLIC_ROUTES } from "./utils/appRoutes.js";
+
+function resolvePageComponent(path) {
+  switch (path) {
+    case "/dashboard": return <DashboardPage />;
+    case "/membership-plans": return <MembershipPlansPage />;
+    case "/memberships": return <MembershipsPage />;
+    case "/bookings": return <BookingsPage />;
+    case "/facilities": return <FacilitiesPage />;
+    case "/equipment": return <EquipmentPage />;
+    case "/equipment-loans": return <EquipmentLoansPage />;
+    case "/reports": return <ReportsPage />;
+    case "/audit-logs": return <AuditLogsPage />;
+    case "/refunds": return <RefundsPage />;
+    default: return null;
+  }
+}
 
 function App() {
   return (
@@ -40,15 +62,7 @@ function App() {
                 >
                   <Route
                     element={
-                      route.path === "/memberships" ? (
-                        <MembershipsPage />
-                      ) : route.path === "/reports" ? (
-                        <ReportsPage />
-                      ) : route.path === "/audit-logs" ? (
-                        <AuditLogsPage />
-                      ) : route.path === "/refunds" ? (
-                        <RefundsPage />
-                      ) : (
+                      resolvePageComponent(route.path) ?? (
                         <RoutePlaceholder title={route.label} path={route.path} />
                       )
                     }
