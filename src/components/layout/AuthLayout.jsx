@@ -9,7 +9,7 @@ export default function AuthLayout() {
         <img className="auth-visual-image" src={bannerImage} alt="" />
         <div className="auth-visual-overlay" />
         <img
-          className="auth-visual-logo"
+          className="auth-visual-logo animate-bounce"
           src={logo}
           alt="Rev. Fr. Moses Orshio Adasu University logo"
         />

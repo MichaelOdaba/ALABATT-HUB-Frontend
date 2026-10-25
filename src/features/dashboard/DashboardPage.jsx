@@ -38,8 +38,16 @@ function formatDate(value) {
   return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 }
 
+function getBookingStart(booking) {
+  return booking.start_time || booking.date;
+}
+
 function formatTime(value) {
   if (!value) return "—";
+  const parsed = new Date(value);
+  if (!Number.isNaN(parsed.getTime()) && String(value).includes("T")) {
+    return parsed.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  }
   return String(value).slice(0, 5);
 }
 
@@ -118,11 +126,11 @@ function MemberHome({ user }) {
   const now = new Date();
   const upcoming = bookings
     .filter((b) => {
-      const d = new Date(b.date);
+      const d = new Date(getBookingStart(b));
       return !Number.isNaN(d.getTime()) && d >= new Date(now.toDateString()) &&
         b.status !== "cancelled" && b.status !== "rejected";
     })
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .sort((a, b) => new Date(getBookingStart(a)) - new Date(getBookingStart(b)))
     .slice(0, 8);
 
   const displayName = user?.first_name || user?.username || "there";
@@ -223,7 +231,7 @@ function MemberHome({ user }) {
                     {upcoming.map((b) => (
                       <tr key={b.id}>
                         <td className="data-table-primary">{getFacilityName(b, facilitiesMap)}</td>
-                        <td>{formatDate(b.date)}</td>
+                        <td>{formatDate(getBookingStart(b))}</td>
                         <td>{formatTime(b.start_time)}</td>
                         <td>{formatTime(b.end_time)}</td>
                         <td>

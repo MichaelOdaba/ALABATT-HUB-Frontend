@@ -153,9 +153,8 @@ function BookingForm({ facilities, onCreated, user }) {
     try {
       const payload = {
         facility: Number(form.facility),
-        date: form.date,
-        start_time: form.start_time,
-        end_time: form.end_time,
+        start_time: `${form.date}T${form.start_time}:00`,
+        end_time: `${form.date}T${form.end_time}:00`,
       };
       if (isCoach) payload.is_event = form.is_event;
       await createBooking(payload);
@@ -492,7 +491,7 @@ export default function BookingsPage() {
   async function handleDecision(id, decision) {
     setDeciding(true);
     try {
-      await bookingDecision(id, { decision });
+      await bookingDecision(id, { status: decision });
       setDecisionTarget(null);
       showToast("success", `Booking ${decision}.`);
       await loadData();
